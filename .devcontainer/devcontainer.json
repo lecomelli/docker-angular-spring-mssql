@@ -1,7 +1,7 @@
 {
 	"name": "Angular + Java + MSSQL ",
-	"dockerComposeFile": "compose.yml",
-	"service": "My App",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "frontend",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}"
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
