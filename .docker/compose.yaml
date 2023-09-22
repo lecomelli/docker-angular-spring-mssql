@@ -1,0 +1,66 @@
+services:
+  backend:
+    build: backend
+    restart: always
+    secrets:
+      - db-password
+    environment:
+      MYSQL_HOST: db
+    networks:
+      - backend-db
+      - frontend-backend
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Very@Complexy#Pass!24512
+    restart: always
+    healthcheck:
+      # test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      test:
+        [
+          "CMD",
+          "/opt/mssql-tools/bin/sqlcmd",
+          "-Usa",
+          "-PVery@Complexy#Pass!24512",
+          "-Q",
+          "select 1",
+        ]
+      interval: 3s
+      retries: 5
+      start_period: 30s
+    secrets:
+      - db-password
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - backend-db
+    ports:
+      - 1433:1433
+  frontend:
+    build:
+      context: frontend
+      target: builder
+    ports:
+      - 4200:4200
+    volumes:
+      - ./frontend:/project
+      - /project/node_modules
+    networks:
+      - frontend-backend
+    depends_on:
+      - backend
+    expose:
+      - 3306
+      - 33060
+volumes:
+  db-data: {}
+secrets:
+  db-password:
+    file: db/password.txt
+networks:
+  frontend-backend: {}
+  backend-db: {}
