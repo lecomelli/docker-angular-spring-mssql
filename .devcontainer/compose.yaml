@@ -1,6 +1,6 @@
 services:
   backend:
-    build: backend
+    build: ../backend
     restart: always
     secrets:
       - db-password
@@ -42,12 +42,12 @@ services:
       - 1433:1433
   frontend:
     build:
-      context: frontend
+      context: ../frontend
       target: builder
     ports:
       - 4200:4200
     volumes:
-      - ./frontend:/project
+      - ../frontend:/project
       - /project/node_modules
     networks:
       - frontend-backend
@@ -60,7 +60,7 @@ volumes:
   db-data: {}
 secrets:
   db-password:
-    file: db/password.txt
+    file: ../db/password.txt
 networks:
   frontend-backend: {}
   backend-db: {}
